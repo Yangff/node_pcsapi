@@ -1,0 +1,11 @@
+{
+    "deal" : 0,
+    "sqltype" : "mysql", 
+    "host" : "localhost",
+    "username" : "pcsuser",
+    "password" : "123456",
+    "port"     : "3306",
+    "database" : "pcsdata",
+    "prefix"   : "pcs",
+    "ssl"      : false
+}

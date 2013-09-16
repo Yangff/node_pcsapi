@@ -1,0 +1,1 @@
+g++ -static -o rapidid rapidid.cpp -lcrypto -lz -g -Wall -O2 -I/local/ssl/include -L/local/ssl/lib

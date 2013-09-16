@@ -1,0 +1,14 @@
+coverage.html
+.DS_Store
+lib-cov
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.swp
+*.swo
+node_modules/
+.idea/
+requestify.iml

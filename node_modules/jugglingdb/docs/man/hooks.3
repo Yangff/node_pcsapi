@@ -1,0 +1,174 @@
+.\" generated with Ronn/v0.7.3
+.\" http://github.com/rtomayko/ronn/tree/0.7.3
+.
+.TH "JUGGLINGDB\-HOOKS" "3" "March 2013" "1602 Software" "JugglingDB"
+.
+.SH "NAME"
+\fBjugglingdb\-hooks\fR \- Hooks and object lifecycle\.
+.
+.SH "DESCRIPTION"
+Hook is a class method called on object when some event happens\. List of events:
+.
+.TP
+\fBinitialize\fR
+Called after \fBnew Model\fR called\.
+.
+.TP
+\fBcreate\fR
+Called before and after create\.
+.
+.TP
+\fBupdate\fR
+Called before and after save (except create)\.
+.
+.TP
+\fBsave\fR
+Called before and after save (including both create and update)\.
+.
+.TP
+\fBvalidate\fR
+Called before and after validations\.
+.
+.TP
+\fBdestroy\fR
+Called before and after destroy on instance\.
+.
+.P
+Each hook except \fBinitialize\fR accepts callback as the first argument\. This callback should be called when hook is done\. All hooks are called on object instance, but it\'s not recommended to use \fBthis\fR for updating all hooks where data argument is available (second argument for all data\-related before\-hooks: save, update, create)\.
+.
+.SH "INITIALIZE"
+Initialize hook called when new object created after all setters and defaults being applied\.
+.
+.IP "" 4
+.
+.nf
+
+Model\.afterInitialize = function() {
+    this\.property = \'some value;
+    console\.log(\'afterInitialize called\');
+};
+new Model; // afterInitialize called
+.
+.fi
+.
+.IP "" 0
+.
+.SH "CREATE"
+Create hooks is being called when object is created\. The \fBbeforeCreate\fR hook accepts \fBdata\fR as a second argument\.
+.
+.IP "" 4
+.
+.nf
+
+Model\.beforeCreate = function(next, data) {
+    // use data argument to update object
+    data\.createdAt = new Date();
+    console\.log(\'before\');
+    next();
+};
+
+Model\.afterCreate = function(next) {
+    this\.notifySocialNetworks();
+    this\.sendEmailNotifications();
+    console\.log(\'after\');
+    next();
+};
+
+Model\.create({foo: \'bar\'}, function(err, model) {
+    console\.log(\'callback\');
+});
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Example output will be:
+.
+.IP "" 4
+.
+.nf
+
+before
+after
+callback
+.
+.fi
+.
+.IP "" 0
+.
+.SH "UPDATE"
+Update hooks called on each save except create\. The \fBbeforeUpdate\fR hook accepts data as second argument\. The data argument contains only actual data for update, not full object data\.
+.
+.IP "" 4
+.
+.nf
+
+Model\.beforeUpdate = function(next, data) {
+    // use data argument to update object
+    // in update hook data argumen only contains data for update (not
+    // full object)
+    data\.updatedAt = new Date();
+    console\.log(\'before\');
+    next();
+};
+
+Model\.afterUpdate = function(next) {
+    this\.scheduleFulltextIndexUpdate();
+    console\.log(\'after\');
+    next();
+};
+
+model\.updateAttributes({foo: \'bar\'}, function(err, model) {
+    console\.log(\'callback\');
+});
+.
+.fi
+.
+.IP "" 0
+.
+.P
+Example output will be:
+.
+.IP "" 4
+.
+.nf
+
+before
+after
+callback
+.
+.fi
+.
+.IP "" 0
+.
+.SH "SAVE"
+Save hooks called on each save, both during update and create\. The \fBbeforeSave\fR hook accepts \fBdata\fR as a second argument\. For this cook hook \fBdata\fR argument is the same as \fBthis\fR when model\.save() is called\. When model\.updateAttributes() called data argument contains only actual changes\.
+.
+.IP "" 4
+.
+.nf
+
+Model\.beforeSave = function(next, data) {
+    if (\'string\' !== typeof data\.tags) {
+        data\.tags = JSON\.stringify(data\.tags);
+    }
+    next();
+};
+
+Model\.afterSave = function(next) {
+    next();
+};
+.
+.fi
+.
+.IP "" 0
+.
+.SH "DESTROY"
+Hook is destroyed once \fBmodel\.destroy()\fR is called\. Please note that \fBdestroyAll\fR method doesn\'t call destroy hooks\.
+.
+.SH "VALIDATE"
+Validate hooks called before and after validation and should be used for data modification and not for validation\. Use custom validation described in jugglingdb\-validations(3) man section\.
+.
+.SH "SEE ALSO"
+jugglingdb\-model(3) jugglingdb\-validations(3)
