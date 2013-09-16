@@ -46,16 +46,16 @@ config.json 是配置文件，格式是这样的：
 
 ```json
 {
-    'deal' : 0,  // 刷新cookie的时间间隔，秒为单位，时间运行时会+-60 // 暂不支持
+    "deal" : 0,  // 刷新cookie的时间间隔，秒为单位，时间运行时会+-60 // 暂不支持
     // sql access data
-    'sqltype' : '', // only allow postgresql now
-    'host' : '',
-    'username' : '',
-    'password' : '',
-    'port'     : '',
-    'database' : '',
-    'prefix'   : '',
+    "sqltype" : "", // only allow postgresql now
+    "host" : "",
+    "username" : "",
+    "password" : "",
+    "port"     : "",
+    "database" : "",
+    "prefix"   : "",
     // service
-    'ssl'      : false // 是否使用ssl（指针对get，而add和delete强制https+client auth）
+    "ssl"      : false // 是否使用ssl（指针对get，而add和delete强制https+client auth）
 }
 ```
